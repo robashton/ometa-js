@@ -10,10 +10,10 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "git://github.com/veged/ometa-js.git"
+		"url": "git://github.com/Page-/ometa-js.git"
 	},
 	"bugs": {
-		"url": "http://github.com/veged/ometa-js/issues"
+		"url": "http://github.com/Page-/ometa-js/issues"
 	},
 	"main": "./lib/ometajs",
 	"directories": {
