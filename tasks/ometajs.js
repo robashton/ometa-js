@@ -42,7 +42,7 @@ module.exports = function(grunt) {
 		var srcCode = grunt.file.read(srcFile);
 
 		try {
-			return require('../lib/ometajs/api').translateCode(srcCode, options);
+			return require('../lib/ometajs/api').compile(srcCode, options);
 		} catch (e) {
 			grunt.log.error(e);
 			grunt.fail.warn('OMetaJS failed to compile.');

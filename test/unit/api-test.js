@@ -1,8 +1,8 @@
 var common = require('../fixtures/common'),
     assert = require('assert');
 
-exports['translateCode should work (w/o root)'] = function(test) {
-  var simple = common.translate('simple');
+exports['compile should work (w/o root)'] = function(test) {
+  var simple = common.compile('simple');
 
   assert.ok(simple);
   assert.ok(/require\('\/[^']+'\)/g.test(simple));
@@ -10,8 +10,8 @@ exports['translateCode should work (w/o root)'] = function(test) {
   test.done();
 };
 
-exports['translateCode should work (with root)'] = function(test) {
-  var simple = common.translate('simple', { root: 'test' });
+exports['compile should work (with root)'] = function(test) {
+  var simple = common.compile('simple', { root: 'test' });
 
   assert.ok(simple);
   assert.ok(/require\('test'\)/g.test(simple));
