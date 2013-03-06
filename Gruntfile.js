@@ -27,11 +27,15 @@ module.exports = function(grunt) {
 					output: 'docs/'
 				}
 			}
+		},
+		nodeunit: {
+			all: ['test/unit/*-test.js']
 		}
 	});
 
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-clean');
+	grunt.loadNpmTasks('grunt-contrib-nodeunit');
 	grunt.loadNpmTasks('grunt-docco');
 	grunt.loadTasks('./tasks');
 	grunt.registerTask('default', ['concat:parsers', 'ometajs:parsers', 'clean:temp']);

@@ -10,7 +10,7 @@ exports.compile = function compile(name, options) {
   return ometajs.compile(code.toString(), options);
 };
 
-exports.compile = function compile(name) {
+exports.evalCode = function evalCode(name) {
   var code = fs.readFileSync(__dirname + '/../files/' + name + '.ometajs');
   return ometajs.evalCode(code.toString());
 };
