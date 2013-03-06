@@ -10,7 +10,8 @@ module.exports = function(grunt) {
 		ometajs: {
 			parsers: {
 				options: {
-					root: '../core'
+					nodeRequirePath: '../core',
+					nodeRequireProperty: ''
 				},
 				src: 'temp/parsers.ometajs',
 				dest: 'lib/ometajs/ometa/parsers.js'

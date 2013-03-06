@@ -1,6 +1,6 @@
 var common = require('../fixtures/common');
 
-exports['compile should work (w/o root)'] = function(test) {
+exports['compile should work (w/o nodeRequirePath)'] = function(test) {
   var simple = common.compile('simple');
 
   test.ok(simple);
@@ -9,8 +9,8 @@ exports['compile should work (w/o root)'] = function(test) {
   test.done();
 };
 
-exports['compile should work (with root)'] = function(test) {
-  var simple = common.compile('simple', { root: 'test' });
+exports['compile should work (with nodeRequirePath)'] = function(test) {
+  var simple = common.compile('simple', { nodeRequirePath: 'test' });
 
   test.ok(simple);
   test.ok(/require\("test"\)/g.test(simple));

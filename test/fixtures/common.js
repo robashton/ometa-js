@@ -1,7 +1,7 @@
 var ometajs = require('../../lib/ometajs'),
     fs = require('fs');
 
-ometajs.root = __dirname + '/../../lib/ometajs/core';
+ometajs.nodeRequirePath = __dirname + '/../../lib/ometajs/core';
 
 exports.ometajs = ometajs;
 
