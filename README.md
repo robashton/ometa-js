@@ -49,7 +49,7 @@ Options:
   --root=ROOT : Path to root module (default: ometajs)
 ```
 
-`ometajs2js` will take input `*.ometajs` file and produce [CommonJS][0]
+`ometajs2js` will take input `*.ometajs` file and produce a [CommonJS][0]/AMD/Browser
 compatible javascript file.
 
 Also you may `require('*.ometajs')` files directly without compilation.
