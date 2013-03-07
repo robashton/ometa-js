@@ -1,0 +1,96 @@
+<!DOCTYPE html>  <html> <head>   <title>api.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="api.html">                 api.js               </a>                                           <a class="source" href="cli.html">                 cli.js               </a>                                           <a class="source" href="core.html">                 core.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               api.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">ometajs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../ometajs&#39;</span><span class="p">),</span>
+  <span class="nx">uglify</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;uglify-js&#39;</span><span class="p">),</span>
+  <span class="nx">vm</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;vm&#39;</span><span class="p">),</span>
+  <span class="nx">Module</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;module&#39;</span><span class="p">),</span>
+  <span class="nx">compressor</span> <span class="o">=</span> <span class="nx">uglify</span><span class="p">.</span><span class="nx">Compressor</span><span class="p">({</span>
+    <span class="nx">sequences</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nx">unused</span><span class="o">:</span> <span class="kc">false</span> <span class="c1">// We need this off for OMeta</span>
+  <span class="p">}),</span>
+  <span class="nx">clone</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">clone</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">{};</span>
+
+    <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">obj</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">o</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+    <span class="p">});</span>
+
+    <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
+  <span class="p">};</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h3>function wrapModule(module)</h3>
+
+<h4>@code {String} javascript code to wrap</h4>
+
+<p>Wrap javascript code in ometajs.core context</p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="kd">function</span> <span class="nx">wrapModule</span><span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">requirePath</span> <span class="o">=</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">root</span> <span class="o">||</span> <span class="nx">ometajs</span><span class="p">.</span><span class="nx">root</span> <span class="o">||</span> <span class="s1">&#39;ometa-core&#39;</span><span class="p">),</span>
+    <span class="nx">start</span> <span class="o">=</span>
+      <span class="s2">&quot;(function (root, factory) {\</span>
+<span class="s2">        if (typeof define === &#39;function&#39; &amp;&amp; define.amd) {\</span>
+<span class="s2">          /* AMD. Register as an anonymous module. */\</span>
+<span class="s2">          define([&#39;exports&#39;, &#39;ometa-core&#39;], factory);\</span>
+<span class="s2">        } else if (typeof exports === &#39;object&#39;) {\</span>
+<span class="s2">          /* CommonJS */\</span>
+<span class="s2">          factory(exports, require(&#39;&quot;</span> <span class="o">+</span> <span class="nx">requirePath</span> <span class="o">+</span> <span class="s2">&quot;&#39;));\</span>
+<span class="s2">        } else {\</span>
+<span class="s2">          /* Browser globals - dangerous */\</span>
+<span class="s2">          factory(root, root.OMeta);\</span>
+<span class="s2">        }\</span>
+<span class="s2">      }(this, function (exports, OMeta) {&quot;</span><span class="p">,</span>
+    <span class="nx">end</span> <span class="o">=</span> <span class="s2">&quot;}));&quot;</span>
+
+  <span class="k">return</span> <span class="nx">start</span> <span class="o">+</span> <span class="nx">code</span> <span class="o">+</span> <span class="nx">end</span><span class="p">;</span>
+<span class="p">};</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <h3>function compile(code)</h3>
+
+<h4>@code {String} source code</h4>
+
+<p>Compiles ometajs code into javascript</p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="kd">function</span> <span class="nx">compile</span><span class="p">(</span><span class="nx">source</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">options</span> <span class="o">||</span> <span class="p">(</span><span class="nx">options</span> <span class="o">=</span> <span class="p">{});</span>
+  <span class="kd">var</span> <span class="nx">tree</span> <span class="o">=</span> <span class="nx">ometajs</span><span class="p">.</span><span class="nx">BSOMetaJSParser</span><span class="p">.</span><span class="nx">matchAll</span><span class="p">(</span><span class="nx">source</span><span class="p">,</span> <span class="s2">&quot;topLevel&quot;</span><span class="p">),</span>
+    <span class="nx">js</span> <span class="o">=</span> <span class="nx">ometajs</span><span class="p">.</span><span class="nx">BSOMetaJSTranslator</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">tree</span><span class="p">,</span> <span class="s2">&quot;trans&quot;</span><span class="p">),</span>
+</pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Beautify code</p>             </td>             <td class="code">               <div class="highlight"><pre>
+    <span class="nx">ast</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">noContext</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">js</span> <span class="o">=</span> <span class="nx">wrapModule</span><span class="p">(</span><span class="nx">js</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="nx">ast</span> <span class="o">=</span> <span class="nx">uglify</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">js</span><span class="p">);</span>
+  <span class="nx">ast</span><span class="p">.</span><span class="nx">figure_out_scope</span><span class="p">();</span>
+  <span class="nx">ast</span> <span class="o">=</span> <span class="nx">ast</span><span class="p">.</span><span class="nx">transform</span><span class="p">(</span><span class="nx">compressor</span><span class="p">);</span>
+  <span class="nx">js</span> <span class="o">=</span> <span class="nx">ast</span><span class="p">.</span><span class="nx">print_to_string</span><span class="p">({</span>
+    <span class="nx">beautify</span><span class="o">:</span> <span class="kc">true</span>
+  <span class="p">});</span>
+
+  <span class="k">return</span> <span class="nx">js</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">compile</span> <span class="o">=</span> <span class="nx">compile</span><span class="p">;</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <h3>function evalCode(code, filename)</h3>
+
+<h4>@code {String} source code</h4>
+
+<h4>@filename {String} filename for stack traces</h4>
+
+<p>Compiles and evaluates ometajs code</p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="kd">function</span> <span class="nx">evalCode</span><span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">filename</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">options</span> <span class="o">||</span> <span class="p">(</span><span class="nx">options</span> <span class="o">=</span> <span class="p">{});</span>
+  <span class="nx">options</span><span class="p">.</span><span class="nx">noContext</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+  <span class="nx">code</span> <span class="o">=</span> <span class="nx">compile</span><span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">vm</span><span class="p">.</span><span class="nx">runInNewContext</span><span class="p">(</span>
+    <span class="s1">&#39;var exports = {};&#39;</span> <span class="o">+</span> <span class="nx">code</span> <span class="o">+</span> <span class="s1">&#39;\n;exports&#39;</span><span class="p">,</span>
+    <span class="nx">clone</span><span class="p">(</span><span class="nx">ometajs</span><span class="p">.</span><span class="nx">core</span><span class="p">),</span>
+    <span class="nx">filename</span> <span class="o">||</span> <span class="s1">&#39;ometa&#39;</span>
+  <span class="p">);</span>
+<span class="p">};</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">evalCode</span> <span class="o">=</span> <span class="nx">evalCode</span><span class="p">;</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Allow users to <code>require(...)</code> ometa files</p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="nx">require</span><span class="p">.</span><span class="nx">extensions</span><span class="p">[</span><span class="s1">&#39;.ometajs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">require</span><span class="p">.</span><span class="nx">extensions</span><span class="p">[</span><span class="s1">&#39;.ojs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">require</span><span class="p">.</span><span class="nx">extensions</span><span class="p">[</span><span class="s1">&#39;.ometa&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">filename</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">code</span> <span class="o">=</span> <span class="nx">compile</span><span class="p">(</span><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">).</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">filename</span><span class="p">).</span><span class="nx">toString</span><span class="p">());</span>
+
+  <span class="nx">module</span><span class="p">.</span><span class="nx">_compile</span><span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">filename</span><span class="p">);</span>
+<span class="p">};</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
